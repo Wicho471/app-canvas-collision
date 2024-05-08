@@ -1,7 +1,6 @@
 const canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 
-// Dimensiones de la pantalla
 const window_height = window.innerHeight;
 const window_width = window.innerWidth;
 canvas.height = window_height;
@@ -16,8 +15,8 @@ class Circle {
         this.color = color;
         this.text = text;
         this.speed = speed;
-        this.dx = 1 * this.speed;
-        this.dy = 1 * this.speed;
+        this.dx = (Math.random() * 2 - 1) * this.speed;
+        this.dy = (Math.random() * 2 - 1) * this.speed;
     }
 
     draw(context) {
@@ -38,6 +37,10 @@ class Circle {
         for (let circle of circles) {
             if (this !== circle && this.isColliding(circle)) {
                 this.color = 'red'; // Change color to red on collision
+                // Calculate response vector for simple elastic collision
+                const angle = Math.atan2(circle.posY - this.posY, circle.posX - this.posX);
+                this.dx = -this.speed * Math.cos(angle);
+                this.dy = -this.speed * Math.sin(angle);
             }
         }
         this.draw(context);
@@ -60,11 +63,10 @@ class Circle {
 }
 
 let circles = [];
-const numCircles = 10; // Variable para ajustar el número de círculos
+const numCircles = 10;
 
-// Generar círculos aleatoriamente
 for (let i = 0; i < numCircles; i++) {
-    let radius = Math.floor(Math.random() * 50 + 10);
+    let radius = Math.floor(Math.random() * 75 + 25);
     let x = Math.random() * (window_width - radius * 2) + radius;
     let y = Math.random() * (window_height - radius * 2) + radius;
     circles.push(new Circle(x, y, radius, 'blue', i.toString(), Math.random() * 3 + 1));
